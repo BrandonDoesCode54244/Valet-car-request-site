@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Car Request</title>
+</head>
+<body>
+  <h1>Request Your Car</h1>
+
+  <form id="carRequestForm">
+    <input type="text" name="unit" placeholder="Unit Number" required><br>
+    <input type="text" name="parking" placeholder="Parking Spot" required><br>
+    <input type="text" name="time" placeholder="Time (e.g. 8:00)" required><br>
+    
+    <select name="ampm" required>
+      <option value="">AM or PM</option>
+      <option value="AM">AM</option>
+      <option value="PM">PM</option>
+    </select><br><br>
+
+    <button type="submit">Submit</button>
+  </form>
+
+  <div id="confirmation" style="display:none;">
+    ✅ Request sent successfully!
+  </div>
+
+  <script>
+    const form = document.getElementById('carRequestForm');
+    const confirmation = document.getElementById('confirmation');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const data = {
+        unit: form.unit.value,
+        parking: form.parking.value,
+        time: form.time.value,
+        ampm: form.ampm.value,
+      };
+
+      fetch('http://127.0.0.1:5000/request_car', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      })
+      .then(response => response.json())
+      .then(result => {
+        if (result.status === 'success') {
+          confirmation.style.display = 'block';
+          form.reset();
+        } else {
+          alert('Failed to send request.');
+        }
+      })
+      .catch(error => {
+        alert('Error connecting to backend.');
+        console.error(error);
+      });
+    });
+  </script>
+</body>
+</html>
